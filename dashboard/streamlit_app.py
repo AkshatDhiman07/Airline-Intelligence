@@ -6,6 +6,7 @@ import streamlit as st
 import pandas as pd
 import awswrangler as wr
 import joblib
+import json
 import boto3
 import plotly.express as px
 from io import BytesIO
@@ -78,12 +79,13 @@ st.markdown("---")
 # ─────────────────────────────────────────────────────────
 # Tabs
 # ─────────────────────────────────────────────────────────
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "🕐 Hourly Patterns",
     "🛫 Route Analysis",
     "✈️ Airlines",
     "📉 COVID Impact",
-    "🔮 Delay Predictor"
+    "🔮 Delay Predictor",
+    "📡 Live Pulse"
 ])
 
 # ─────────────────────────────────────────────────────────
@@ -246,10 +248,144 @@ with tab5:
     except Exception as e:
         st.error(f"Could not load ML model: {e}")
 
+# ─────────────────────────────────────────────────────────
+# TAB 6: Live Pulse (real-time data from Aviationstack)
+# ─────────────────────────────────────────────────────────
+with tab6:
+    st.header("📡 Live Flight Pulse")
+    st.markdown(
+        "**Real-time data** from the AWS Lambda + EventBridge ingestion pipeline. "
+        "Updates every 12 hours via Aviationstack API."
+    )
+    
+    # Cached function to list live files
+    @st.cache_data(ttl=300)  # refresh every 5 minutes
+    def list_live_files():
+        s3 = boto3.client('s3')
+        response = s3.list_objects_v2(
+            Bucket='airline-raw-flight-data',
+            Prefix='aviationstack/'
+        )
+        files = response.get('Contents', [])
+        return sorted(files, key=lambda x: x['LastModified'], reverse=True)
+    
+    # Cached function to load the latest live JSON
+    @st.cache_data(ttl=300)
+    def load_latest_live_data(s3_key):
+        s3 = boto3.client('s3')
+        obj = s3.get_object(Bucket='airline-raw-flight-data', Key=s3_key)
+        return json.loads(obj['Body'].read())
+    
+    import json
+    
+    try:
+        files = list_live_files()
+        
+        if not files:
+            st.warning("No live data files found yet. Live pipeline runs every 12 hours.")
+        else:
+            # KPI tiles for live data
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                st.metric("Live Snapshots Collected", f"{len(files):,}")
+            with col2:
+                latest_file = files[0]
+                st.metric("Last Ingestion (UTC)", latest_file['LastModified'].strftime('%Y-%m-%d %H:%M'))
+            with col3:
+                total_size_mb = sum(f['Size'] for f in files) / 1e6
+                st.metric("Total Live Data Size", f"{total_size_mb:.2f} MB")
+            with col4:
+                st.metric("Ingestion Schedule", "Every 12h")
+            
+            st.markdown("---")
+            
+            # Load latest snapshot
+            latest_data = load_latest_live_data(latest_file['Key'])
+            flights = latest_data.get('data', [])
+            
+            st.subheader(f"📍 Latest Snapshot — {len(flights)} live flights")
+            st.caption(f"Source: `{latest_file['Key']}`")
+            
+            if flights:
+                # Build a clean DataFrame
+                rows = []
+                for f in flights:
+                    rows.append({
+                        'Flight Date': f.get('flight_date'),
+                        'Status': f.get('flight_status'),
+                        'Airline': f.get('airline', {}).get('name'),
+                        'Flight #': f.get('flight', {}).get('iata') or f.get('flight', {}).get('icao'),
+                        'Origin': f.get('departure', {}).get('iata'),
+                        'Origin Airport': f.get('departure', {}).get('airport'),
+                        'Destination': f.get('arrival', {}).get('iata'),
+                        'Dest Airport': f.get('arrival', {}).get('airport'),
+                        'Scheduled Dep': f.get('departure', {}).get('scheduled'),
+                        'Dep Delay (min)': f.get('departure', {}).get('delay'),
+                    })
+                
+                live_df = pd.DataFrame(rows)
+                
+                # Status breakdown
+                col_a, col_b = st.columns([1, 2])
+                with col_a:
+                    st.markdown("**Flight Status Breakdown**")
+                    status_counts = live_df['Status'].value_counts()
+                    fig = px.pie(
+                        names=status_counts.index,
+                        values=status_counts.values,
+                        title="Current Flight Statuses",
+                        color_discrete_sequence=px.colors.qualitative.Set2
+                    )
+                    fig.update_layout(height=300)
+                    st.plotly_chart(fig, use_container_width=True)
+                
+                with col_b:
+                    st.markdown("**Top 10 Destinations Right Now**")
+                    top_dests = live_df['Dest Airport'].value_counts().head(10).reset_index()
+                    top_dests.columns = ['Destination Airport', 'Flights']
+                    fig2 = px.bar(
+                        top_dests, x='Flights', y='Destination Airport',
+                        orientation='h',
+                        color='Flights',
+                        color_continuous_scale='Blues'
+                    )
+                    fig2.update_layout(height=300, yaxis={'categoryorder': 'total ascending'})
+                    st.plotly_chart(fig2, use_container_width=True)
+                
+                st.markdown("---")
+                st.subheader("✈️ Live Flights Table")
+                st.dataframe(live_df, use_container_width=True, height=400)
+                
+                # Refresh button
+                if st.button("🔄 Refresh Live Data"):
+                    st.cache_data.clear()
+                    st.rerun()
+            else:
+                st.info("Latest snapshot contains no flight records.")
+            
+            # Show all collected snapshots
+            with st.expander("📂 View All Live Data Snapshots"):
+                files_df = pd.DataFrame([{
+                    'File': f['Key'].split('/')[-1],
+                    'Collected At (UTC)': f['LastModified'].strftime('%Y-%m-%d %H:%M:%S'),
+                    'Size (KB)': round(f['Size'] / 1024, 1)
+                } for f in files])
+                st.dataframe(files_df, use_container_width=True)
+        
+        st.markdown("---")
+        st.info(
+            "🏗️ **Architecture:** This data flows from Aviationstack API → AWS Lambda "
+            "(scheduled via EventBridge every 12h) → S3 (Hive-partitioned JSON) → "
+            "Streamlit dashboard. The pipeline has been running autonomously since May 9, 2026."
+        )
+    
+    except Exception as e:
+        st.error(f"Could not load live data: {e}")
+        st.info("This usually means the live pipeline hasn't run yet, or IAM permissions need adjustment.")
 
 # ─────────────────────────────────────────────────────────
 # Footer
 # ─────────────────────────────────────────────────────────
 st.markdown("---")
 st.markdown("**Architecture:** S3 Data Lake | AWS Lambda + EventBridge (live ingestion) | Athena | Random Forest ML | Streamlit")
-st.markdown("**Built by:** Akshat Dhiman, Northeastern University | May 2026")
+st.markdown("**Built by:** Akshat Dhiman, Maharshi Patel, Kartik Aneja, Jainam Patel, Kirti Bagul, Northeastern University | May 2026")
