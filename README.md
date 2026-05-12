@@ -131,7 +131,7 @@ The Random Forest model identifies `dep_hour` as the single most important featu
 │   └── (model artifacts in S3)
 │
 ├── dashboard/
-│   └── streamlit_app.py               # 5-tab interactive dashboard
+│   └── streamlit_app.py               # 6-tab interactive dashboard
 │
 ├── api/
 │   └── handler.py                     # Lambda inference (stub)
@@ -141,7 +141,7 @@ The Random Forest model identifies `dep_hour` as the single most important featu
 │
 └── docs/
 ├── BUSINESS_CASE.md               # Monetization strategy
-└── screenshots/                   # Dashboard captures
+└── Screenshots/                   # Dashboard captures + architecture
 ---
 
 ## 🚀 Quick Start
