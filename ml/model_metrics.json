@@ -1,0 +1,82 @@
+{
+  "auc_roc": 0.6673,
+  "accuracy": 0.6242,
+  "f1_score": 0.366,
+  "confusion_matrix": [
+    [
+      30945,
+      18459
+    ],
+    [
+      4089,
+      6507
+    ]
+  ],
+  "top_features": [
+    {
+      "feature": "dep_hour",
+      "importance": 0.4857043906285188
+    },
+    {
+      "feature": "month_num",
+      "importance": 0.0787419847593316
+    },
+    {
+      "feature": "distance",
+      "importance": 0.07464383038233913
+    },
+    {
+      "feature": "airline_code_WN",
+      "importance": 0.04595293919621766
+    },
+    {
+      "feature": "airline_code_B6",
+      "importance": 0.02691388430776864
+    },
+    {
+      "feature": "day_of_week_num",
+      "importance": 0.025957404669920317
+    },
+    {
+      "feature": "origin_OTHER",
+      "importance": 0.024284146152623226
+    },
+    {
+      "feature": "airline_code_DL",
+      "importance": 0.018864827130990126
+    },
+    {
+      "feature": "airline_code_OO",
+      "importance": 0.016101275990115068
+    },
+    {
+      "feature": "airline_code_F9",
+      "importance": 0.014087100298983852
+    },
+    {
+      "feature": "airline_code_9E",
+      "importance": 0.013333687774175046
+    },
+    {
+      "feature": "airline_code_YX",
+      "importance": 0.009616940608129726
+    },
+    {
+      "feature": "origin_DEN",
+      "importance": 0.007226367329431867
+    },
+    {
+      "feature": "is_weekend",
+      "importance": 0.006318769609212841
+    },
+    {
+      "feature": "dest_OTHER",
+      "importance": 0.0060548856326544465
+    }
+  ],
+  "model_type": "RandomForestClassifier",
+  "n_estimators": 100,
+  "max_depth": 15,
+  "training_samples": 240000,
+  "test_samples": 60000
+}
