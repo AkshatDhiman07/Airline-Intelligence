@@ -23,7 +23,7 @@ Travel agencies, corporate travel managers, and consumers collectively lose bill
 ---
 
 ## 🏗️ Architecture
-![System Architecture](docs/screenshots/system_architecture.png)
+![System Architecture](docs/Screenshots/system_architecture.png)
 ┌────────────────────┐    ┌────────────────────┐
 │ Kaggle BTS Data    │    │ Aviationstack API  │
 │ (3M records, CSV)  │    │ (Live, JSON)       │
