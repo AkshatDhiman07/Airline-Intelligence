@@ -1,4 +1,4 @@
-# ✈️ Travel Intelligence Platform
+# ✈️ Airline Intelligence
 
 > **B2B aviation analytics platform built on AWS** — predicts flight delays, surfaces operational insights from 3M historical records, and ingests live flight data via a serverless pipeline.
 
