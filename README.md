@@ -181,7 +181,7 @@ Outputs a trained model and uploads to `s3://airline-processed-flight-data/ml-mo
 
 ## 🎬 Demo
 
-[Watch the 3-minute demo video here](https://www.youtube.com/watch?v=ywQuLzKjexc)
+[Watch the demo video here](https://www.youtube.com/watch?v=ywQuLzKjexc)
 
 ### Dashboard Screenshots
 
