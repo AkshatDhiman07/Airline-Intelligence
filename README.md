@@ -207,7 +207,7 @@ Outputs a trained model and uploads to `s3://airline-processed-flight-data/ml-mo
 ![ML Predictor](docs/Screenshots/Delay_prediction.png)
 
 **Live Pulse — Real-Time Ingestion:**
-![Live Pulse](docs/Screenshots/live pulse.png)
+![Live Pulse](docs/Screenshots/live-pulse.png)
 
 </details>
 
