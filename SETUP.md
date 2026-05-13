@@ -61,8 +61,8 @@ In the AWS Console:
 ```bash
 aws configure
 # Enter when prompted:
-# AWS Access Key ID:     [your key]
-# AWS Secret Access Key: [your secret]
+# AWS Access Key ID:     [Will be provided to verified users]
+# AWS Secret Access Key: [Will be provided to verified users]
 # Default region:        us-east-1
 # Default output format: json
 
