@@ -189,25 +189,25 @@ Outputs a trained model and uploads to `s3://airline-processed-flight-data/ml-mo
 <summary>📊 Click to view dashboard screenshots</summary>
 
 **KPI Overview:**
-![KPI Dashboard](docs/Screenshots/01_kpi_dashboard.png)
+![KPI Dashboard](docs/Screenshots/get_kpis().png)
 
 **Hourly Patterns — The "Morning Flight" Insight:**
-![Hourly Patterns](docs/Screenshots/02_hourly_patterns.png)
+![Hourly Patterns](docs/Screenshots/hourly_pattern.png)
 
 **Route Analysis — Worst-Performing Routes:**
-![Route Analysis](docs/Screenshots/03_route_analysis.png)
+![Route Analysis](docs/Screenshots/route_analysis.png)
 
 **Airline Performance Comparison:**
-![Airlines](docs/Screenshots/04_airlines_2023.png)
+![Airlines](docs/Screenshots/Airlines.png)
 
 **COVID Impact (2019–2023):**
-![COVID Impact](docs/Screenshots/05_covid_impact.png)
+![COVID Impact](docs/Screenshots/Covid_impact.png)
 
 **Real-Time ML Delay Predictor:**
-![ML Predictor](docs/Screenshots/06_ml_predictor.png)
+![ML Predictor](docs/Screenshots/Delay_prediction.png)
 
 **Live Pulse — Real-Time Ingestion:**
-![Live Pulse](docs/Screenshots/07_live_pulse.png)
+![Live Pulse](docs/Screenshots/live pulse.png)
 
 </details>
 
