@@ -316,6 +316,9 @@ Master's Student, Northeastern University
 Master's Student, Northeastern University  
 [LinkedIn](https://www.linkedin.com/in/maharshipatel49/) | [GitHub](https://github.com/maharshisrk)
 
+**Aaditya Kumar Singh**  
+Master's Student, Northeastern University  
+[LinkedIn](https://www.linkedin.com/in/aaditya-singh-66b269190/) | [GitHub](https://github.com/aaditya2504)
 ---
 
 ## 📅 Project Timeline
